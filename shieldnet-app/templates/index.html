@@ -1,0 +1,201 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>🛡️ ShieldNet | Analizador de Texto Inteligente</title>
+
+  <!-- Fuentes y estilos -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet" />
+
+  <style>
+    /* ======== ESTILOS GLOBALES ======== */
+    body {
+      font-family: 'Inter', sans-serif;
+      background: radial-gradient(circle at top left, #002b5b, #004aad, #007bff);
+      color: #f5f6fa;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      margin: 0;
+      padding: 20px;
+    }
+
+    /* ======== CONTENEDOR PRINCIPAL ======== */
+    .card {
+      width: 700px;
+      background: #ffffff;
+      color: #1b1f3b;
+      border-radius: 20px;
+      padding: 32px;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.15);
+      transition: transform 0.3s ease;
+    }
+
+    .card:hover {
+      transform: translateY(-4px);
+    }
+
+    /* ======== CABECERA ======== */
+    .logo {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 12px;
+    }
+
+    .logo span {
+      font-size: 40px;
+      margin-right: 8px;
+    }
+
+    h1 {
+      text-align: center;
+      font-size: 26px;
+      font-weight: 700;
+      margin-bottom: 8px;
+      color: #004aad;
+    }
+
+    p.subtitle {
+      text-align: center;
+      font-size: 15px;
+      color: #6b7280;
+      margin-bottom: 24px;
+    }
+
+    /* ======== FORMULARIO ======== */
+    label {
+      font-weight: 600;
+      display: block;
+      margin-bottom: 8px;
+      color: #1b1f3b;
+    }
+
+    textarea {
+      width: 100%;
+      height: 150px;
+      padding: 14px;
+      border: 2px solid #e0e4ef;
+      border-radius: 10px;
+      resize: vertical;
+      font-size: 15px;
+      transition: 0.3s;
+    }
+
+    textarea:focus {
+      border-color: #004aad;
+      box-shadow: 0 0 0 3px rgba(0, 74, 173, 0.15);
+      outline: none;
+    }
+
+    /* ======== BOTÓN ======== */
+    button {
+      background: linear-gradient(90deg, #004aad, #007bff);
+      color: white;
+      border: none;
+      padding: 14px;
+      border-radius: 10px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      width: 100%;
+      margin-top: 16px;
+      transition: 0.3s;
+    }
+
+    button:hover {
+      opacity: 0.9;
+      transform: scale(1.02);
+    }
+
+    /* ======== RESULTADO ======== */
+    .result {
+      margin-top: 20px;
+      padding: 16px;
+      border-radius: 12px;
+      background: #f1f6ff;
+      color: #0b3c6a;
+      font-weight: 600;
+      box-shadow: 0 0 12px rgba(0, 74, 173, 0.1);
+      animation: fadeIn 0.5s ease;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(5px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ======== FOOTER ======== */
+    footer {
+      text-align: center;
+      margin-top: 24px;
+      font-size: 13px;
+      color: #6b7280;
+    }
+
+    footer a {
+      color: #004aad;
+      text-decoration: none;
+      font-weight: 600;
+    }
+
+    footer a:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <div class="logo">
+      <span>🛡️</span>
+      <h1>ShieldNet</h1>
+    </div>
+    <p class="subtitle">Analiza textos con IA y detecta discursos de odio o desinformación.</p>
+
+    <label for="text">Texto para analizar:</label>
+    <textarea id="text" placeholder="Escribe aquí el texto que deseas analizar..."></textarea>
+
+    <button id="analyzeBtn">🔍 Analizar Texto</button>
+
+    <div id="result" class="result" style="display:none;"></div>
+
+    <footer>
+      © 2025 <a href="#">ShieldNet Team</a> — Innovación con Inteligencia Artificial
+    </footer>
+  </div>
+
+  <script>
+    document.getElementById('analyzeBtn').addEventListener('click', async () => {
+      const text = document.getElementById('text').value.trim();
+      if (!text) return alert("Por favor, escribe un texto para analizar.");
+
+      const res = await fetch('/api/analyze', {
+        method: 'POST',
+        headers: {'Content-Type':'application/json'},
+        body: JSON.stringify({text})
+      });
+
+      const data = await res.json();
+      const resultDiv = document.getElementById('result');
+
+      if (!res.ok) {
+        resultDiv.style.display = 'block';
+        resultDiv.style.background = '#ffeaea';
+        resultDiv.style.color = '#8b0000';
+        resultDiv.innerHTML = `<strong>Error:</strong> ${data.error || 'No se pudo analizar el texto.'}`;
+        return;
+      }
+
+      resultDiv.style.display = 'block';
+      resultDiv.style.background = '#e8f4ff';
+      resultDiv.style.color = '#0b3c6a';
+      resultDiv.innerHTML = `
+        <div>🧠 Resultado: <strong>${data.label}</strong></div>
+        <div>📊 Confianza: ${(data.confidence * 100).toFixed(1)}%</div>
+      `;
+    });
+  </script>
+</body>
+</html>
