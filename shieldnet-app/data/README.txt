@@ -93,3 +93,4 @@ pip freeze > requirements.txt
 
 Luego, en otro equipo puedes instalar todo con:
 pip install -r requirements.txt
+
